@@ -1,0 +1,80 @@
+{% extends "index.html" %}
+
+{% block title %}Centros de Custo{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h1 class="title">Centros de Custo</h1>
+    <div class="box">
+        <h2 class="subtitle">Adicionar Novo Centro de Custo</h2>
+        <form id="centro-form">
+            <div class="field">
+                <label class="label" for="nome">Nome</label>
+                <div class="control">
+                    <input class="input" type="text" id="nome" name="nome" required>
+                </div>
+            </div>
+            <div class="field">
+                <label class="label" for="descricao">Descrição</label>
+                <div class="control">
+                    <input class="input" type="text" id="descricao" name="descricao" required>
+                </div>
+            </div>
+            <div class="field">
+                <div class="control">
+                    <button type="button" class="button is-link" onclick="adicionarCentro()">Adicionar Centro</button>
+                </div>
+            </div>
+        </form>
+    </div>
+    <h2 class="subtitle mt-4">Centros de Custo Existentes</h2>
+    <table class="table is-striped is-fullwidth">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Nome</th>
+                <th>Descrição</th>
+            </tr>
+        </thead>
+        <tbody id="centros-list">
+            <!-- Centros serão listados aqui com JavaScript -->
+        </tbody>
+    </table>
+</div>
+
+<script>
+    function carregarCentros() {
+        fetch('/centros-custo/')
+            .then(response => response.json())
+            .then(data => {
+                const centrosList = document.getElementById("centros-list");
+                centrosList.innerHTML = ''; // Limpa a lista antes de atualizar
+                data.forEach(centro => {
+                    const row = centrosList.insertRow();
+                    row.insertCell(0).textContent = centro[0];
+                    row.insertCell(1).textContent = centro[1];
+                    row.insertCell(2).textContent = centro[2];
+                });
+            });
+    }
+
+    function adicionarCentro() {
+        const nome = document.getElementById("nome").value;
+        const descricao = document.getElementById("descricao").value;
+
+        fetch('/centros-custo/', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ nome: nome, descricao: descricao })
+        })
+        .then(response => response.json())
+        .then(data => {
+            alert(data.message);
+            carregarCentros(); // Atualiza a lista de centros
+        })
+        .catch(error => console.error('Erro:', error));
+    }
+
+    document.addEventListener('DOMContentLoaded', carregarCentros);
+</script>
+{% endblock %}

@@ -1,0 +1,83 @@
+{% extends "index.html" %}
+
+{% block title %}Lançamentos Contábeis{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h1 class="title">Lançamentos Contábeis</h1>
+    <div class="box">
+        <h2 class="subtitle">Adicionar Novo Lançamento</h2>
+        <form id="lancamento-form">
+            <!-- Campos do formulário de lançamento -->
+            <!-- ... -->
+            <div class="field">
+                <div class="control">
+                    <button type="button" class="button is-success" onclick="adicionarLancamento()">Adicionar Lançamento</button>
+                </div>
+            </div>
+        </form>
+    </div>
+    <h2 class="subtitle mt-4">Lançamentos Existentes</h2>
+    <table class="table is-striped is-fullwidth">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Conta</th>
+                <th>Centro de Custo</th>
+                <th>Histórico</th>
+                <th>Tipo</th>
+                <th>Valor</th>
+                <th>Data</th>
+            </tr>
+        </thead>
+        <tbody id="lancamentos-list">
+            <!-- Lançamentos serão listados aqui com JavaScript -->
+        </tbody>
+    </table>
+</div>
+
+<script>
+    function carregarLancamentos() {
+        fetch('/lancamentos/')
+            .then(response => response.json())
+            .then(data => {
+                const lancamentosList = document.getElementById("lancamentos-list");
+                lancamentosList.innerHTML = ''; // Limpa a lista antes de atualizar
+                data.forEach(lancamento => {
+                    const row = lancamentosList.insertRow();
+                    row.insertCell(0).textContent = lancamento[0];
+                    row.insertCell(1).textContent = lancamento[1];
+                    row.insertCell(2).textContent = lancamento[2];
+                    row.insertCell(3).textContent = lancamento[3];
+                    row.insertCell(4).textContent = lancamento[4];
+                    row.insertCell(5).textContent = lancamento[5];
+                    row.insertCell(6).textContent = lancamento[6];
+                });
+            });
+    }
+
+    function adicionarLancamento() {
+        const conta = document.getElementById("conta").value;
+        const centro = document.getElementById("centro").value;
+        const historico = document.getElementById("historico").value;
+        const tipo = document.getElementById("tipo").value;
+        const valor = document.getElementById("valor").value;
+        const data = document.getElementById("data").value;
+
+        fetch('/lancamentos/', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ conta_contabil_id: conta, centro_custo_id: centro, historico: historico, tipo: tipo, valor: valor, data: data })
+        })
+        .then(response => response.json())
+        .then(data => {
+            alert(data.message);
+            carregarLancamentos(); // Atualiza a lista de lançamentos
+        })
+        .catch(error => console.error('Erro:', error));
+    }
+
+    document.addEventListener('DOMContentLoaded', carregarLancamentos);
+</script>
+{% endblock %}
+
