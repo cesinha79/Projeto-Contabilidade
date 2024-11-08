@@ -1,0 +1,4 @@
+conta_contabil_id,centro_custo_id,historico,tipo,valor,data
+1,2,Pagamento De material,credito,32000,2023-10-05
+2,3,Pagamento De serviço,debito,4800,2024-10-05
+3,4,Venda de produto,debito,5000,2024-10-02
